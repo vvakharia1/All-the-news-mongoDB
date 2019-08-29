@@ -1,0 +1,27 @@
+{
+  "name": "all-the-news-mongodb",
+  "version": "1.0.0",
+  "description": "database project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vvakharia1/All-the-news-mongoDB.git"
+  },
+  "author": "Vidhi Vakharia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vvakharia1/All-the-news-mongoDB/issues"
+  },
+  "homepage": "https://github.com/vvakharia1/All-the-news-mongoDB#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "mongoose": "^5.6.11"
+  }
+}
