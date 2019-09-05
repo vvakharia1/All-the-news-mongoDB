@@ -20,26 +20,36 @@ var app = express();
 
 // Connect to MongoDB
 
-
 // Mongoose to MongoDB connection
 var MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
 mongoose.connect(MONGODB_URI);
 
-   
 // ROUTES
 /**
- * 
+ *
  * pick a new site
  * read html for where stories are contained
  * use cheerio to load that page via url
  * search for the element that contains stories
- * 
+ *
  */
 // Get request for getting articles from the NYT website
-app.get("/scrape"), function(req, res) {
+app.get("/scrape"),
+  function(req, res) {
     axios.get("http://www.newyorktimes.com/").then(function(response) {
-        var $ = cheerio.load(response.data);
-    })
-}
+      var $ = cheerio.load(response.data);
+
+      $("article h2").each(function(i, element) {
+        var article = {};
+
+        article.title = $(this)
+          .children("a")
+          .text();
+        article.link = $(this)
+          .children("a")
+          .attr("href");
+      });
+    });
+  };
