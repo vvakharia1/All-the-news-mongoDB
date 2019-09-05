@@ -1,7 +1,6 @@
 // Depenencies
 var express = require("express");
 var mongoose = require("mongoose");
-var logger = require("morgan");
 
 // Scraping Tools
 // Axios is a promised-based http library, similar to jQuery's Ajax method
@@ -11,9 +10,9 @@ var cheerio = require("cheerio"); // web scraper when a site doesn't have an API
 // through the process of connecting to the api and making calls
 
 // Requiring Models
-var db = require("./models");
+// var db = require("./models");
 
-var PORT = 3000;
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 var app = express();
@@ -24,7 +23,7 @@ var app = express();
 var MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
-mongoose.connect(MONGODB_URI);
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 // ROUTES
 /**
@@ -36,32 +35,48 @@ mongoose.connect(MONGODB_URI);
  *
  */
 // Get request for getting articles from the NYT website
-app.get("/scrape"),
-  function(req, res) {
-    axios.get("http://www.newyorktimes.com/").then(function(response) {
-      var $ = cheerio.load(response.data);
+app.get("/scrape", function(req, res) {
+  console.log("IN SCRAPE ROUTE");
+  axios.get("http://www.newyorktimes.com/").then(function(response) {
+    var $ = cheerio.load(response.data);
 
-      $("article h2").each(function(i, element) {
-        var scrapeResult = {};
+    $("article h2").each(function(i, element) {
+      var scrapeResult = {};
 
-        // adding the text and href of every link on the nytimes website and saving them as properties
+      // adding the text and href of every link on the nytimes website and saving them as properties
 
-        scrapeResult.title = $(this)
-          .children("a")
-          .text();
-        scrapeResult.link = $(this)
-          .children("a")
-          .attr("href");
+      scrapeResult.title = $(this)
+        .children("a")
+        .text();
+      scrapeResult.link = $(this)
+        .children("a")
+        .attr("href");
 
-        // create a new Article using the 'scrapeResult' object created from scraping
+      // create a new Article using the 'scrapeResult' object created from scraping
 
-        db.Article.create(scrapeResult)
-          .then(function(dbArticle) {
-            console.log(dbArticle);
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
-      });
+      //   db.Article.create(scrapeResult)
+      //     .then(function(dbArticle) {
+      //       console.log(dbArticle);
+      //     })
+      //     .catch(function(err) {
+      //       console.log(err);
+      //     });
     });
-  };
+
+    res.send("Your Scrape is Complete!");
+  });
+});
+
+// Get request for grabbing the articles from the database
+app.get("/articles", function(req, res) {});
+db.Article.find({})
+  .then(function(dbArticle) {
+    res.json(dbArticle);
+  })
+  .catch(function(err) {
+    res.json(err);
+  });
+
+app.listen(PORT, function() {
+  console.log("listening on port " + PORT);
+});
