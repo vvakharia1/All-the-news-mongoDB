@@ -42,14 +42,26 @@ app.get("/scrape"),
       var $ = cheerio.load(response.data);
 
       $("article h2").each(function(i, element) {
-        var article = {};
+        var scrapeResult = {};
 
-        article.title = $(this)
+        // adding the text and href of every link on the nytimes website and saving them as properties
+
+        scrapeResult.title = $(this)
           .children("a")
           .text();
-        article.link = $(this)
+        scrapeResult.link = $(this)
           .children("a")
           .attr("href");
+
+        // create a new Article using the 'scrapeResult' object created from scraping
+
+        db.Article.create(scrapeResult)
+          .then(function(dbArticle) {
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
       });
     });
   };
