@@ -77,6 +77,7 @@ db.Article.find({})
     res.json(err);
   });
 
+// Starting server
 app.listen(PORT, function() {
   console.log("listening on port " + PORT);
 });
