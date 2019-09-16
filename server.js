@@ -10,7 +10,7 @@ var cheerio = require("cheerio"); // web scraper when a site doesn't have an API
 // through the process of connecting to the api and making calls
 
 // Requiring Models
-// var db = require("./models");
+var db = require("./models");
 
 var PORT = process.env.PORT || 3000;
 
@@ -37,11 +37,12 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 // Get request for getting articles from the NYT website
 app.get("/scrape", function(req, res) {
   console.log("IN SCRAPE ROUTE");
-  axios.get("http://www.newyorktimes.com/").then(function(response) {
+  axios.get("http://www.medium.com/").then(function(response) {
     var $ = cheerio.load(response.data);
-
-    $("article h2").each(function(i, element) {
+    console.log(response.data);
+    $("article").each(function(i, element) {
       var scrapeResult = {};
+      console.log(element);
 
       // adding the text and href of every link on the nytimes website and saving them as properties
 
@@ -52,7 +53,9 @@ app.get("/scrape", function(req, res) {
         .children("a")
         .attr("href");
 
-      // create a new Article using the 'scrapeResult' object created from scraping
+      console.log(scrapeResult);
+
+      //   create a new Article using the 'scrapeResult' object created from scraping
 
       //   db.Article.create(scrapeResult)
       //     .then(function(dbArticle) {
@@ -68,16 +71,19 @@ app.get("/scrape", function(req, res) {
 });
 
 // Get request for grabbing the articles from the database
-app.get("/articles", function(req, res) {});
-db.Article.find({})
-  .then(function(dbArticle) {
-    res.json(dbArticle);
-  })
-  .catch(function(err) {
-    res.json(err);
-  });
+app.get("/articles", function(req, res) {
+  db.Article.find({})
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
 
 // Starting server
 app.listen(PORT, function() {
   console.log("listening on port " + PORT);
 });
+
+//client -> send request on page load-> server -> scrappes website -> stored db -> send client articles
