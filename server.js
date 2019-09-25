@@ -1,6 +1,7 @@
 // Depenencies
 var express = require("express");
 var mongoose = require("mongoose");
+var path = require("path");
 
 // Scraping Tools
 // Axios is a promised-based http library, similar to jQuery's Ajax method
@@ -35,6 +36,12 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
  *
  */
 // Get request for getting articles from the NYT website
+
+//Making request to homepage
+app.get("/", function(req, res) {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 app.get("/scrape", function(req, res) {
   console.log("IN SCRAPE ROUTE");
   axios.get("http://www.medium.com/").then(function(response) {
